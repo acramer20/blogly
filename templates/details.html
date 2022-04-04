@@ -1,0 +1,6 @@
+{%extends 'list.html'%}
+{%block title%}Details Page{%endblock%}
+{%block content%}
+<h1>{{user.first_name}} {{user.last_name}}</h1>
+<img src="{{user.img_url}}" alt="{{user.first_name}} {{user.last_name}} picture">
+{%endblock%}

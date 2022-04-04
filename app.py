@@ -43,7 +43,13 @@ def add_user():
     db.session.add(new_user)
     db.session.commit()
 
-    return redirect('/', first_name=first_name, last_name=last_name, img_url=img_url)
+    return redirect('/')
+
+@app.route('/<int:user_id>')
+def show_user(user_id):
+    """Shows the user's details"""
+    user = User.query.get_or_404(user_id)
+    return render_template('details.html', user=user)
 
 # @app.route('/<int:pet_id>')
 # def show_pet(pet_id):
