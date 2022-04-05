@@ -11,10 +11,12 @@
     <h1>Users</h1>
     <ul>
     {%for user in users%}
-        <li>{{user.first_name}} {{user.last_name}}</li>
+        <li><a href="/users/{{user.id}}">{{user.first_name}} {{user.last_name}}</a></li>
     {%endfor%}
     </ul>
-    <button type="button"><a href="/add_user">Add User</a></button>
+    <form>
+    <button type="submit" formaction="/users/add_user" formmethod="GET">Add User</button>
+    </form>
     {%endblock%}
 </body>
 </html>

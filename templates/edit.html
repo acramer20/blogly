@@ -1,0 +1,12 @@
+{% extends 'list.html' %}
+
+{% block title %}Edit {{ user.first_name }} {{user.last_name}} {% endblock %}}
+
+{% block content %}
+<form method="POST">
+    <input type="text" name="first_name" value="{{user.first_name}}">
+    <input type="text" name="last_name" value="{{user.last_name}}">
+    <input type="text" name="img_url" value="{{user.img_url}}">
+    <button type="submit">Save</button>
+</form>
+{%endblock%}
