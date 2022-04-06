@@ -3,6 +3,7 @@
 from enum import unique
 from optparse import Values
 from flask_sqlalchemy import SQLAlchemy
+import datetime 
 
 # Not understanding the use of the above imports completely. 
 
@@ -33,6 +34,27 @@ class User(db.Model):
 
     img_url = db.Column(db.String, nullable=True)
 
+    posts = db.relationship("Post", backref="user", cascade="all, delete-orphan")
+
+class Post(db.Post):
+    """Post"""
+
+    __tablename__ = "posts"
+
+    @classmethod
+    def __repr__(self):
+        p = self
+        return f"<Post id={p.id} title={p.title} content={p.content} created_at={p.created_at} user_id={p.user_id}>"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    title = db.Column(db.Text, nullable=False)
+
+    content = db.Column(db.Text, nullable=False)
+
+    created_at = db.Column(db.DateTime, nullable=False, default= datetime.datetime.now)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
 
