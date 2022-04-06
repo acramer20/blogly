@@ -12,6 +12,14 @@
         <div>
             <textarea name="content" placeholder="Your content goes here."></textarea>
         </div>
+        {%for tag in tags%}
+        <div>
+            <input type="checkbox" value="{{tag.id}}" name="tags"
+            id="tag_{{tag.id}}">
+            <label for="tag_{{tag.id}}">{{tag.name}}</label>
+        </div>
+        {%endfor%}
+        
         <div>
             <button type="submit">Submit</button>
         </div>

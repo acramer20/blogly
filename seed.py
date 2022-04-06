@@ -1,6 +1,6 @@
 """Seed file to make sample data for pets db."""
 
-from models import User, Post, db
+from models import User, Post, Tag, PostTag, db
 from app import app
 
 # Create all tables
@@ -34,3 +34,28 @@ db.session.add(post1w)
 db.session.add(post1b)
 
 db.session.commit()
+
+# Making new tags to start off with
+
+tag1 = Tag(name='lol')
+tag2 = Tag(name='lgbtq')
+tag3 = Tag(name='love')
+tag4 = Tag(name='peace')
+tag5 = Tag(name='casino')
+
+db.session.add_all([tag1, tag2, tag3, tag4, tag5])
+
+db.session.commit()
+
+# Connecting the tags and the posts
+
+post_tag1 = PostTag(post_id=1, tag_id=3)
+post_tag2 = PostTag(post_id=1, tag_id=1)
+post_tag3 = PostTag(post_id=2, tag_id=2)
+post_tag4 = PostTag(post_id=4, tag_id=4)
+post_tag5 = PostTag(post_id=3, tag_id=5)
+
+db.session.add_all([post_tag1, post_tag2, post_tag3, post_tag4, post_tag5])
+
+db.session.commit()
+

@@ -3,7 +3,7 @@
 from crypt import methods
 from flask import Flask, request, redirect, render_template
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Tag, PostTag
 
 app = Flask(__name__)
 
@@ -23,6 +23,14 @@ db.create_all()
 def root():
     """Redirects to users page"""
     return redirect("/users")
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """Show 404 NOT FOUND page."""
+
+    return render_template('404.html'), 404
+
+# ROUTES FOR USERS
 
 @app.route('/users')
 def list_users():
@@ -58,11 +66,6 @@ def show_user(user_id):
     user = User.query.get_or_404(user_id)
     return render_template('details.html', user=user)
 
-# @app.route('/users/<int:user_id>/edit')
-# def show_user(user_id):
-#     """Shows edit form"""
-#     user = User.query.get_or_404(user_id)
-#     return render_template('edit.html', user=user)
 
 @app.route('/users/<int:user_id>/edit', methods=['GET', 'POST'])
 def users_edit(user_id):
@@ -90,16 +93,20 @@ def delete_user(user_id):
 
     return redirect('/users')
 
-# routes for Posts
+# ROUTES FOR POSTS
 
 @app.route('/users/<int:user_id>/posts/new', methods=['GET', 'POST'])
 def new_post_form(user_id):
 # NEED REMINDER AS TO WHERE WE ARE GETTING user_id FROM and why we put it there in the first place. 
     """form for adding a new post"""
     user = User.query.get_or_404(user_id)
+    tags = Tag.query.all()
 
     if request.method =='POST':
-        new_post = Post(title=request.form['title'], content=request.form['content'], user_id=user.id) 
+        user = User.query.get_or_404(user_id)
+        tag_ids = [int(num) for num in request.form.getlist('tags')]
+        tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
+        new_post = Post(title=request.form['title'], content=request.form['content'], user_id=user.id, tags=tags) 
         # **** may need to adjust the user_id somehow ***
         db.session.add(new_post)
         db.session.commit()
@@ -107,7 +114,7 @@ def new_post_form(user_id):
 
         return redirect(f"/users/{user_id}")
 
-    return render_template('posts/new.html', user = user)
+    return render_template('posts/new.html', user = user, tags = tags)
 
 @app.route('/posts/<int:post_id>', methods=['GET'])
 def show_post_contents(post_id):
@@ -119,17 +126,21 @@ def show_post_contents(post_id):
 def post_edit(post_id):
     """Editing the existing user's info"""
     post = Post.query.get_or_404(post_id)
+    tags = Tag.query.all()
     if request.method == 'POST':
         post.title = request.form['title']
         post.content = request.form['content']
         post.user_id = f"{post.user_id}"
+
+        tag_ids = [int(num) for num in request.form.getlist('tags')]
+        post.tags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
 
         db.session.add(post)
         db.session.commit()
     
         return redirect(f'/users/{post.user_id}')
 
-    return render_template('posts/edit.html', post=post)
+    return render_template('posts/edit.html', post=post, tags = tags)
 
 @app.route('/posts/<int:post_id>/delete', methods=['POST'])
 def delete_post(post_id):
@@ -141,6 +152,66 @@ def delete_post(post_id):
 
     return redirect(f'/users/{post.user_id}')
     # Again here the use of user_id (explain) *******
+
+
+# ROUTES FOR TAGS 
+
+@app.route('/tags')
+def show_tags():
+    """Shows a page with all of the tags and their info"""
+
+    tags = Tag.query.all()
+    return render_template('tags/index.html', tags = tags)
+
+@app.route('/tags/new', methods=['GET', 'POST'])
+def new_tag():
+    """takes user to create a new tag"""
+    if request.method == 'POST':
+
+        new_tag = Tag(name=request.form['tag_name'])
+
+        db.session.add(new_tag)
+        db.session.commit()
+        return redirect('/tags')
+
+    return render_template('tags/create.html')
+
+@app.route('/tags/<int:tag_id>')
+def show_tag_details(tag_id):
+    """Shows a page with tag information (ie: posts associated with tag and opts"""
+    tag = Tag.query.get_or_404(tag_id)
+    return render_template('tags/details.html', tag = tag)
+
+@app.route('/tags/<int:tag_id>/edit', methods=['GET', 'POST'])
+def tag_edit(tag_id):
+    """Editing the name of a tag"""
+    tag = Tag.query.get_or_404(tag_id)
+    if request.method == 'POST':
+        tag.name = request.form['tag_name']
+
+        db.session.add(tag)
+        db.session.commit()
+    
+        return redirect(f'/tags')
+
+    return render_template('tags/edit.html', tag=tag)
+
+@app.route('/tags/<int:tag_id>/delete', methods=['POST'])
+def delete_tag(tag_id):
+    """Deleting an existing tag"""
+
+    tag = Tag.query.get_or_404(tag_id)
+    db.session.delete(tag)
+    db.session.commit()
+
+    return redirect(f'/tags')
+
+
+
+
+
+
+
 
 
 

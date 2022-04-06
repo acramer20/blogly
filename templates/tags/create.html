@@ -1,0 +1,17 @@
+{%extends 'list.html'%}
+
+{%block title%}Create Tag{%endblock%}
+
+{%block content%}
+<h1>Create a Tag</h1>
+<div>
+    <form>
+        <label for="tag_name">Name</label>
+        <input type="text" name="tag_name" placeholder="Enter a name for the tag">
+        <div>
+            <button type="submit" formmethod="GET" formaction="/tags">Cancel</button>
+            <button type="submit" formmethod="POST" formaction="/tags/new">Add</button>
+        </div>
+    </form>
+</div>
+{%endblock%}

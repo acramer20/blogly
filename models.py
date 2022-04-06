@@ -57,4 +57,39 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 
+class PostTag(db.Model):
+    """Post and Tag connected"""
+
+    __tablename__ = "posts_tags"
+
+    @classmethod
+    def __repr__(self):
+        pt = self
+        return f"<PostTag post_id={pt.post_id} tag_id={pt.tag_id}>"
+
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'),primary_key=True, nullable=False)
+
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'), primary_key=True, nullable=False)
+
+class Tag(db.Model):
+    """Tag"""
+
+    __tablename__ = "tags"
+
+    @classmethod
+    def __repr__(self):
+        t = self
+        return f"<Tag id={t.id} name={t.name}>"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    name = db.Column(db.Text, unique=True, nullable=False)
+
+    posts = db.relationship('Post', secondary='posts_tags', cascade="all,delete", backref='tags')
+
+
+
+
+
+
 
