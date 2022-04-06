@@ -36,7 +36,7 @@ class User(db.Model):
 
     posts = db.relationship("Post", backref="user", cascade="all, delete-orphan")
 
-class Post(db.Post):
+class Post(db.Model):
     """Post"""
 
     __tablename__ = "posts"

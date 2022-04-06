@@ -1,0 +1,21 @@
+{%extends 'list.html'%}
+{%block title%}Post Details{%endblock%}
+
+{%block content%}
+<h1>{{post.title}}</h1>
+<div>
+    <p>{{post.content}}</p>
+</div>
+<div>
+    <p><i>Posted By: {{post.user.first_name}} {{post.user.last_name}}</i></p>
+    <p><i>Time Posted: {{post.created_at}}</i></p>
+</div>
+<div>
+    <form>
+        <button type="submit" formaction="/users/{{post.user.id}}" formmethod="GET">Cancel</button>
+        <button type="submit" formaction="/posts/{{post.id}}/edit" formmethod="GET">Edit</button>
+        <button type="submit" formaction="/posts/{{post.id}}/delete" formmethod="POST">Delete</button>
+
+    </form>
+</div>
+{%endblock%}

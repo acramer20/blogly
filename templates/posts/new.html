@@ -1,0 +1,21 @@
+{%extends 'list.html'%}
+
+
+{%block title%}New Post{%endblock%}
+{%block content%}
+<h1>Hey {{user.first_name}}, Add Your Post!</h1>
+<div>
+    <form method="POST" action="/users/{{user.id}}/posts/new">
+        <div>
+            <input type="text" name="title" placeholder="Title your post.">
+        </div>
+        <div>
+            <textarea name="content" placeholder="Your content goes here."></textarea>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+
+{%endblock%}

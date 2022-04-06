@@ -92,5 +92,57 @@ def delete_user(user_id):
 
 # routes for Posts
 
+@app.route('/users/<int:user_id>/posts/new', methods=['GET', 'POST'])
+def new_post_form(user_id):
+# NEED REMINDER AS TO WHERE WE ARE GETTING user_id FROM and why we put it there in the first place. 
+    """form for adding a new post"""
+    user = User.query.get_or_404(user_id)
+
+    if request.method =='POST':
+        new_post = Post(title=request.form['title'], content=request.form['content'], user_id=user.id) 
+        # **** may need to adjust the user_id somehow ***
+        db.session.add(new_post)
+        db.session.commit()
+        # could add in a flash here
+
+        return redirect(f"/users/{user_id}")
+
+    return render_template('posts/new.html', user = user)
+
+@app.route('/posts/<int:post_id>', methods=['GET'])
+def show_post_contents(post_id):
+    """Show the contents of each user's posts"""
+    post = Post.query.get_or_404(post_id)
+    return render_template('posts/details.html', post = post)
+
+@app.route('/posts/<int:post_id>/edit', methods=['GET', 'POST'])
+def post_edit(post_id):
+    """Editing the existing user's info"""
+    post = Post.query.get_or_404(post_id)
+    if request.method == 'POST':
+        post.title = request.form['title']
+        post.content = request.form['content']
+        post.user_id = f"{post.user_id}"
+
+        db.session.add(post)
+        db.session.commit()
+    
+        return redirect(f'/users/{post.user_id}')
+
+    return render_template('posts/edit.html', post=post)
+
+@app.route('/posts/<int:post_id>/delete', methods=['POST'])
+def delete_post(post_id):
+    """Delete an existing post"""
+
+    post = Post.query.get_or_404(post_id)
+    db.session.delete(post)
+    db.session.commit()
+
+    return redirect(f'/users/{post.user_id}')
+    # Again here the use of user_id (explain) *******
+
+
+
 
 
